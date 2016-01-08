@@ -20,6 +20,8 @@
     function resetOffset($textField) {
       var offset = $textField.caret('offset');
       var position = $textField.caret('position');
+      var pos = $textField.caret('pos')
+      console.log("position = " + pos)
       resizeBox(offset, position);
       return offset
     }

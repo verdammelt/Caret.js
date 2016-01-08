@@ -11,7 +11,7 @@ module.exports = (grunt) ->
           '<%= bower_path %>/jasmine-jquery/lib/jasmine-jquery.js'
           ]
         specs: 'spec/javascripts/*.js'
-        # keepRunner: true
+        keepRunner: true
 
     uglify:
       options:

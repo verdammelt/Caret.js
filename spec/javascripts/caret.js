@@ -48,11 +48,22 @@ describe('jquery.caret', function() {
         + '<div>--</div>'
         + '</div>'
         + '<div><br></div>'
-        + '</div>';
+                          + '</div>';
+      /*
+====================
+Hello World!
+
+
+Testing 1
+Testing 2
+--
+
+====================
+      */
 
       var fixture = setFixtures(contentEditable);
       $inputor = fixture.find('#inputor');
-    });
+   });
 
     it('sets the caret position at the top-level', function() {
       $inputor.caret('pos', 3);
@@ -70,31 +81,39 @@ describe('jquery.caret', function() {
       expect($inputor.caret('pos')).toBe(8);
     });
 
+
     it('sets the caret position in a list item', function() {
-      $inputor.caret('pos', 16);
+      $inputor.caret('pos', 18);
       var selection = window.getSelection();
       expect(selection.anchorNode.nodeValue).toBe('Testing 1');
-      expect(selection.anchorOffset).toBe(3);
-      expect($inputor.caret('pos')).toBe(16);
+      expect(selection.anchorOffset).toBe(2);
+      expect($inputor.caret('pos')).toBe(18);
     });
 
     it('sets the caret position at the end of a list item', function() {
       $inputor.caret('pos', 30);
       var selection = window.getSelection();
       expect(selection.anchorNode.nodeValue).toBe('Testin 2');
-      expect(selection.anchorOffset).toBe(8);
+      expect(selection.anchorOffset).toBe(4);
       expect($inputor.caret('pos')).toBe(30);
     });
 
     describe('Edge case from Gmail', function() {
       beforeEach(function() {
         var content = ''
-          + '<div id="inputor" contenteditable="true">'
-          + 'Hello '
-          + '<span>just</span> want'
-          + '<ul><li>Hi</li></ul>'
-          + '<div>---</div>'
-          + '</div>';
+                    + '<div id="inputor" contenteditable="true">'
+                    + 'Hello '
+                    + '<span>just</span> want'
+                    + '<ul><li>Hi</li></ul>'
+                    + '<div>---</div>'
+                    + '</div>';
+        /*
+====================
+Hello just want
+Hi
+---
+====================
+        */
         var fixture = setFixtures(content);
         $inputor = fixture.find('#inputor');
       });
@@ -103,7 +122,7 @@ describe('jquery.caret', function() {
         $inputor.caret('pos', 16);
         var selection = window.getSelection();
         expect(selection.anchorNode.nodeValue).toBe('Hi');
-        expect(selection.anchorOffset).toBe(1);
+        expect(selection.anchorOffset).toBe(0);
         expect($inputor.caret('pos')).toBe(16);
       });
     });

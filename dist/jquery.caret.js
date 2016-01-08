@@ -53,7 +53,7 @@ EditableCaret = (function() {
           if (found) {
             break;
           }
-          if (node.nodeType === 3) {
+          if (node.nodeType === Node.TEXT_NODE) {
             if (offset + node.length >= pos) {
               found = true;
               range = oDocument.createRange();
@@ -64,6 +64,12 @@ EditableCaret = (function() {
             } else {
               _results.push(offset += node.length);
             }
+          } else if (node.tagName.toUpperCase() === 'DIV') {
+            offset += 1;
+            _results.push(fn(pos, node));
+          } else if (node.tagName.toUpperCase() === 'LI') {
+            offset += 1;
+            _results.push(fn(pos, node));
           } else {
             _results.push(fn(pos, node));
           }
@@ -97,12 +103,39 @@ EditableCaret = (function() {
   };
 
   EditableCaret.prototype.getPos = function() {
-    var clonedRange, pos, range;
+    var clonedRange, countTextInNode, pos, range;
     if (range = this.range()) {
       clonedRange = range.cloneRange();
       clonedRange.selectNodeContents(this.domInputor);
       clonedRange.setEnd(range.endContainer, range.endOffset);
-      pos = clonedRange.toString().length;
+      countTextInNode = function(parent, count) {
+        var node, _i, _len, _ref;
+        if (count == null) {
+          count = 0;
+        }
+        _ref = parent.childNodes;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          node = _ref[_i];
+          if (node.nodeType === Element.TEXT_NODE) {
+            console.log("TEXT");
+            count += node.length;
+          } else if (node.nodeName.toUpperCase() === "DIV") {
+            console.log("DIV");
+            count = 1 + countTextInNode(node, count);
+          } else if (node.nodeName.toUpperCase() === "LI") {
+            console.log("LI");
+            count = 1 + countTextInNode(node, count);
+          } else {
+            console.log("<other>");
+            count = countTextInNode(node, count);
+          }
+        }
+        console.log("returning " + count);
+        return count;
+      };
+      console.log("HELLO");
+      console.log(clonedRange.cloneContents().childNodes);
+      pos = countTextInNode(clonedRange.cloneContents());
       clonedRange.detach();
       return pos;
     } else if (oDocument.selection) {

@@ -28,7 +28,7 @@ class EditableCaret
         for node in parent.childNodes
           if found
             break
-          if node.nodeType == 3
+          if node.nodeType == Node.TEXT_NODE
             if offset + node.length >= pos
               found = true
               range = oDocument.createRange()
@@ -38,6 +38,12 @@ class EditableCaret
               break
             else
               offset += node.length
+          else if node.tagName.toUpperCase() == 'DIV'
+            offset += 1
+            fn(pos, node)
+          else if node.tagName.toUpperCase() == 'LI'
+            offset += 1
+            fn(pos, node)
           else
             fn(pos, node)
 
@@ -63,7 +69,30 @@ class EditableCaret
       clonedRange = range.cloneRange()
       clonedRange.selectNodeContents(@domInputor)
       clonedRange.setEnd(range.endContainer, range.endOffset)
-      pos = clonedRange.toString().length
+
+      countTextInNode = (parent, count=0) ->
+        for node in parent.childNodes
+          if node.nodeType == Element.TEXT_NODE
+            console.log "TEXT"
+            count += node.length;
+          else if node.nodeName.toUpperCase() == "DIV"
+            console.log "DIV"
+            count = 1 + countTextInNode(node, count)
+          else if node.nodeName.toUpperCase() == "LI"
+            console.log "LI"
+            count = 1 + countTextInNode(node, count)
+          else
+            console.log "<other>"
+            count = countTextInNode(node, count)
+
+        console.log "returning #{count}"
+        count
+
+      console.log "HELLO"
+
+      console.log clonedRange.cloneContents().childNodes
+
+      pos = countTextInNode(clonedRange.cloneContents())
       clonedRange.detach()
       pos
     else if oDocument.selection #IE < 9
